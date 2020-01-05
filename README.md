@@ -1,4 +1,4 @@
-# Phaser Cars
+# Phaser 3 Cars
 
 Playing around with cars in Phaser 3.
 
