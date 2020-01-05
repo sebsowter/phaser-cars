@@ -69,19 +69,19 @@ export class CarPlayer extends CarContainer {
     let wheelAngle = this.getData('wheelAngle');
     let angularVelocity = this.body.angularVelocity * angularDrag;
     let speed = this.body.speed;
-    let acceleration = 0;
+    let throttle = 0;
 
     if (this.inputs.left) {
       wheelAngle = Math.max(wheelAngle - turnRate, -turnMax);
       
       if (speed > 0.1) {
-        angularVelocity += wheelAngle / (10 + (angularDrag * 190));
+        angularVelocity += wheelAngle / (10 + angularDrag * 190);
       }
     } else if (this.inputs.right) {
       wheelAngle = Math.min(wheelAngle + turnRate, turnMax);
       
       if (speed > 0.1) {
-        angularVelocity += wheelAngle / (10 + (angularDrag * 190));
+        angularVelocity += wheelAngle / (10 + angularDrag * 190);
       }
     } else if (wheelAngle > 0) {
       wheelAngle = Math.max(wheelAngle - turnRate, 0);
@@ -90,16 +90,18 @@ export class CarPlayer extends CarContainer {
     }
 
     if (this.inputs.up) {
-      acceleration = power;
+      throttle = power;
     } else if (this.inputs.down) {
-      acceleration = -powerReverse;
+      throttle = -powerReverse;
       speed = -speed;
     }
 
-    const velocityX = (velocityPrevX * drag) + Math.sin(this.rotation) * (speed * grip + acceleration);
-    const velocityY = (velocityPrevY * drag) - Math.cos(this.rotation) * (speed * grip + acceleration);
+    const velocity = new Phaser.Math.Vector2(
+      velocityPrevX * drag + Math.sin(this.rotation) * (speed * grip + throttle),
+      velocityPrevY * drag - Math.cos(this.rotation) * (speed * grip + throttle)
+    );
 
-    this.setVelocity(velocityX, velocityY);
+    this.setVelocity(velocity.x, velocity.y);
     this.setAngularVelocity(angularVelocity);
     this.setData('wheelAngle', wheelAngle);
 
