@@ -15,60 +15,58 @@ export default class RacingScene extends Phaser.Scene {
     
     this.matter.world.setBounds(0, 0, bg.width, bg.height);
 
-    this.player = new CarPlayer(this, bg.width / 2, bg.height / 2, {
-      startAngle: 90
-    });
+    this.player = new CarPlayer(this, bg.width / 2, bg.height / 2).setAngle(90);
 
     this.cars = this.add.group({
       classType: CarStatic
     });
 
-    const RANDOM = 4;
+    const random = 4;
 
     for (let i = 0; i < 15; i++) {
-      if (Math.random() < 1 / RANDOM) {
+      if (Math.random() < 1 / random) {
         this.cars.create(60, 80 + 16 * i).setAngle(90);
       }
     }
 
     for (let i = 0; i < 15; i++) {
-      if (Math.random() < 1 / RANDOM) {
+      if (Math.random() < 1 / random) {
         this.cars.create(452, 80 + 16 * i).setAngle(-90);
       }
     }
 
     for (let i = 0; i < 23; i++) {
-      if (Math.random() < 1 / RANDOM) {
+      if (Math.random() < 1 / random) {
         this.cars.create(80 + 16 * i, 324).setAngle(0);
       }
     }
 
     for (let i = 0; i < 23; i++) {
-      if (Math.random() < 1 / RANDOM) {
+      if (Math.random() < 1 / random) {
         this.cars.create(80 + 16 * i, 60).setAngle(180);
       }
     }
 
     for (let i = 0; i < 17; i++) {
-      if (Math.random() < 1 / RANDOM) {
+      if (Math.random() < 1 / random) {
         this.cars.create(128 + 16 * i, 132).setAngle(0);
       }
     }
 
     for (let i = 0; i < 17; i++) {
-      if (Math.random() < 1 / RANDOM) {
+      if (Math.random() < 1 / random) {
         this.cars.create(128 + 16 * i, 156).setAngle(180);
       }
     }
 
     for (let i = 0; i < 17; i++) {
-      if (Math.random() < 1 / RANDOM) {
+      if (Math.random() < 1 / random) {
         this.cars.create(128 + 16 * i, 228).setAngle(0);
       }
     }
 
     for (let i = 0; i < 17; i++) {
-      if (Math.random() < 1 / RANDOM) {
+      if (Math.random() < 1 / random) {
         this.cars.create(128 + 16 * i, 252).setAngle(180);
       }
     }
