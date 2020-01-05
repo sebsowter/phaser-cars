@@ -3,86 +3,59 @@ import Inputs from './Inputs';
 
 export class SkidMark extends Phaser.GameObjects.Rectangle {
   constructor(scene, x, y) {
-    super(scene, x, y, 4, 1, 0x000000);
-  }
-}
-
-export class CarWheel extends Phaser.GameObjects.Rectangle {
-  constructor(scene, x, y, wheelWidth, wheelDiameter) {
-    super(scene, x, y, wheelWidth, wheelDiameter, 0x000000);
-  }
-}
-
-export class CarChasis extends Phaser.GameObjects.Sprite {
-  constructor(scene, texture, frame) {
-    super(scene, 0, 0, texture, frame);
+    super(scene, x, y, 4, 1, 0x333333);
   }
 }
 
 export class CarContainer extends Phaser.GameObjects.Container {
-  constructor(scene, x, y, startAngle = 0, {
-    angularGrip = 0.05,
-    chasisWidth = 8,
-    chasisLength = 16,
-    frame = 0,
-    friction = 0.1,
-    frictionAir = 0.01,
-    frictionStatic = 0.5,
-    grip = 0.05,
-    power = 0.08,
-    reverseMax = 10,
-    skidMarkColor = 0x333333,
-    speedMax = 2,
-    texture = 'cars',
-    turnRate = 20 * Phaser.Math.DEG_TO_RAD,
-    turnMax = 40 * Phaser.Math.DEG_TO_RAD,
-    wheelDiameter = 4,
-    wheelDistance = 2,
-    wheelWidth = 2,
+  constructor(scene, x, y, {
+    startAngle = 0,
+    frame = 1,
   }) {
-    const chasis = new CarChasis(scene, texture, frame);
+    const chasisWidth = 8;
+    const chasisLength = 16;
+    const wheelDiameter = 4;
+    const wheelDistance = 2;
+    const wheelWidth = 2;
+    const chasis = new Phaser.GameObjects.Sprite(scene, 0, 0, 'cars', frame);
     const wheels = [];
-
+    
     for (let iy = 0; iy < 2; iy++) {
       for (let ix = 0; ix < 2; ix++) {
         const wx = -chasisWidth / 2 + ix * chasisWidth;
         const wy = -(chasisLength / 2 - wheelDistance) + (iy * (chasisLength - wheelDistance * 2));
-        const wheel = new CarWheel(scene, wx, wy, wheelWidth, wheelDiameter);
-        
+        const wheel = new Phaser.GameObjects.Rectangle(scene, wx, wy, wheelWidth, wheelDiameter, 0x000000);
+
         wheels.push(wheel);
       }
     }
 
     super(scene, x, y, wheels.concat([chasis]));
-    
-    this.setData('grip', grip);
-    this.setData('speedMax', speedMax);
-    this.setData('angularGrip', angularGrip);
-    this.setData('reverseMax', reverseMax);
-    this.setData('power', power);
-    this.setData('drag', speedMax * 4);
-    this.setData('turnMax', turnMax);
-    this.setData('turnRate', turnRate);
-    this.setData('wheelAngle', 0);
-    this.setSize(chasisWidth, chasisLength);
-
-    this.scene.add.existing(this);
-    this.scene.matter.add.gameObject(this);
-
-    this.setDepth(10);
-    this.setAngle(startAngle);
-    this.setFriction(friction, frictionAir, frictionStatic);
 
     this.wheels = wheels;
     this.chasis = chasis;
+    this.setSize(chasisWidth, chasisLength);
+    this.scene.add.existing(this);
+    this.scene.matter.add.gameObject(this);
+    this.setDepth(10);
+    this.setAngle(startAngle);
+  }
+}
 
-    this.skidMarks = new Phaser.GameObjects.Group(scene, null, {
-      classType: SkidMark,
-      createCallback: function(skidMark) {
-        skidMark.setFillStyle(skidMarkColor);
-      }
+export class CarKinetic extends CarContainer {
+  constructor(...args) {
+    super(...args);
+    
+    this.setData('angularGrip', 0.05);
+    this.setData('grip', 0.05);
+    this.setData('power', 0.075);
+    this.setData('turnMax', 40 * Phaser.Math.DEG_TO_RAD);
+    this.setData('turnRate', 20 * Phaser.Math.DEG_TO_RAD);
+    this.setData('wheelAngle', 0);
+
+    this.skidMarks = this.scene.add.group({
+      classType: SkidMark
     });
-    this.scene.add.existing(this.skidMarks);
   }
 
   preUpdate() {
@@ -113,20 +86,24 @@ export class CarContainer extends Phaser.GameObjects.Container {
   }
 }
 
-export class CarPlayer extends CarContainer {
-  constructor(scene, x, y, startAngle, options) {
-    super(scene, x, y, startAngle, options);
+export class CarPlayer extends CarKinetic {
+  constructor(scene, x, y, options) {
+    super(scene, x, y, {
+      ...options,
+      frame: 0,
+    });
+
     this.inputs = new Inputs(this.scene);
   }
 
   preUpdate() {
+    const ANGULAR_GRIP = this.getData('angularGrip');
+    const ANGULAR_DRAG = 1 - ANGULAR_GRIP;
+    const GRIP = this.getData('grip');
+    const DRAG = 1 - GRIP;
     const POWER = this.getData('power');
     const TURN_MAX = this.getData('turnMax');
     const TURN_RATE = this.getData('turnRate');
-    const GRIP = this.getData('grip');
-    const DRAG = 1 - GRIP;
-    const ANGULAR_GRIP = this.getData('angularGrip');
-    const ANGULAR_DRAG = 1 - ANGULAR_GRIP;
     const velocityPrevX = this.body.position.x - this.body.positionPrev.x;
     const velocityPrevY = this.body.position.y - this.body.positionPrev.y;
     
@@ -170,12 +147,9 @@ export class CarPlayer extends CarContainer {
 }
 
 export class CarStatic extends CarContainer {
-  constructor(scene, x, y, startAngle, options) {
-    super(scene, x, y, startAngle, {
-      ...options,
-      texture: 'cars',
+  constructor(scene, x, y) {
+    super(scene, x, y, {
       frame: 1,
-      chasisLength: 14
     });
   }
 }

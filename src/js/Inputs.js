@@ -1,6 +1,6 @@
-export default class MarioInputs {
+export default class Inputs {
   constructor(scene) {
-    this.keys = scene.input.keyboard.addKeys('W,A,S,D,up,left,down,right,space');
+    this.keys = scene.input.keyboard.addKeys('W,A,S,D,up,left,down,right');
   }
 
   get up() {
@@ -17,9 +17,5 @@ export default class MarioInputs {
 
   get right() {
     return this.keys.right.isDown || this.keys.D.isDown;
-  }
-
-  get jump() {
-    return this.keys.up.isDown || this.keys.W.isDown || this.keys.space.isDown;
   }
 }

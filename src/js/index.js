@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import GameScene from './GameScene';
+import Scene from './Scene';
 
 const config = {
   type: Phaser.AUTO,
@@ -7,9 +7,6 @@ const config = {
   height: 224,
   zoom: 3,
   pixelArt: true,
-  input: {
-    queue: true
-  },
   physics: {
     default: 'matter',
     matter: {
@@ -19,7 +16,7 @@ const config = {
       }
     }
   },
-  scene: GameScene
+  scene: Scene
 };
 
 const game = new Phaser.Game(config);
