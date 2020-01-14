@@ -55,7 +55,7 @@ export class CarPlayer extends CarContainer {
   }
 
   preUpdate() { 
-    const WHEEL_COEFFICIENT = 1 / 20;
+    const WHEEL_COEFFICIENT = 1 / 10;
     const powerForward = this.getData('power');
     const powerReverse = this.getData('powerReverse');
     const turnMax = this.getData('turnMax');
@@ -111,7 +111,7 @@ export class CarPlayer extends CarContainer {
     this.wheels[0].setRotation(wheelAngle);
     this.wheels[1].setRotation(wheelAngle);
 
-    if (Math.abs(this.body.angularVelocity) > 0.025 && Math.abs(this.body.speed) > 2) {
+    if (Math.abs(this.body.angularVelocity) > 0.025 && Math.abs(this.body.speed) > 1) {
       const position = new Phaser.Math.Vector2(
         this.x + Math.sin(this.body.angle) * -6,
         this.y - Math.cos(this.body.angle) * -6
