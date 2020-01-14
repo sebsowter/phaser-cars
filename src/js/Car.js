@@ -8,27 +8,27 @@ export class SkidMark extends Phaser.GameObjects.Rectangle {
 }
 
 export class CarContainer extends Phaser.GameObjects.Container {
-  constructor(scene, x, y, frame = 1) {
-    const chasis = new Phaser.GameObjects.Sprite(scene, 0, 0, 'cars', frame);
-    const chasisLength = 16;
-    const chasisWidth = 8;
+  constructor(scene, x, y, frame) {
+    const chassis = new Phaser.GameObjects.Sprite(scene, 0, 0, 'cars', frame);
+    const chassisLength = 16;
+    const chassisWidth = 8;
     const wheels = [];
     
     for (let iy = 0; iy < 2; iy++) {
       for (let ix = 0; ix < 2; ix++) {
-        const wx = -chasisWidth / 2 + ix * chasisWidth;
-        const wy = -(chasisLength / 2 - 2) + (iy * (chasisLength - 2 * 2));
+        const wx = -chassisWidth / 2 + ix * chassisWidth;
+        const wy = -(chassisLength / 2 - 2) + (iy * (chassisLength - 2 * 2));
         const wheel = new Phaser.GameObjects.Rectangle(scene, wx, wy, 2, 4, 0x000000);
 
         wheels.push(wheel);
       }
     }
 
-    super(scene, x, y, wheels.concat([chasis]));
+    super(scene, x, y, wheels.concat([chassis]));
 
     this.wheels = wheels;
-    this.chasis = chasis;
-    this.setSize(chasisWidth, chasisLength);
+    this.chassis = chassis;
+    this.setSize(chassisWidth, chassisLength);
     this.scene.add.existing(this);
     this.scene.matter.add.gameObject(this);
     this.setDepth(2);
@@ -40,7 +40,7 @@ export class CarPlayer extends CarContainer {
     super(scene, x, y, 0);
     
     this.setData('angularGrip', 0.05);
-    this.setData('grip', 0.05);
+    this.setData('grip', 0.02);
     this.setData('power', 0.075);
     this.setData('powerReverse', 0.025);
     this.setData('turnMax', 40 * Phaser.Math.DEG_TO_RAD);
@@ -54,34 +54,44 @@ export class CarPlayer extends CarContainer {
     this.inputs = new Inputs(this.scene);
   }
 
-  preUpdate() {
-    const angularGrip = this.getData('angularGrip');
-    const angularDrag = 1 - angularGrip;
-    const grip = this.getData('grip');
-    const drag = 1 - grip;
+  preUpdate() { 
+    const WHEEL_COEFFICIENT = 1 / 20;
+    const powerForward = this.getData('power');
     const powerReverse = this.getData('powerReverse');
-    const power = this.getData('power');
     const turnMax = this.getData('turnMax');
     const turnRate = this.getData('turnRate');
-    const velocityPrevX = this.body.position.x - this.body.positionPrev.x;
-    const velocityPrevY = this.body.position.y - this.body.positionPrev.y;
-    
+    const grip = this.getData('grip');
+    const drag = 1 - grip;
+    const angularGrip = this.getData('angularGrip');
+    const angularDrag = 1 - angularGrip;
+    const velocityPrev = new Phaser.Math.Vector2(
+      this.body.position.x - this.body.positionPrev.x,
+      this.body.position.y - this.body.positionPrev.y,
+    );
+
     let wheelAngle = this.getData('wheelAngle');
     let angularVelocity = this.body.angularVelocity * angularDrag;
     let speed = this.body.speed;
-    let throttle = 0;
+    let power = 0;
+
+    if (this.inputs.up) {
+      power = powerForward;
+    } else if (this.inputs.down) {
+      power = -powerReverse;
+      speed = -speed;
+    }
 
     if (this.inputs.left) {
       wheelAngle = Math.max(wheelAngle - turnRate, -turnMax);
       
-      if (speed > 0.1) {
-        angularVelocity += wheelAngle / (10 + angularDrag * 190);
+      if (this.body.speed > 0.1) {
+        angularVelocity += wheelAngle * WHEEL_COEFFICIENT * angularGrip;
       }
     } else if (this.inputs.right) {
       wheelAngle = Math.min(wheelAngle + turnRate, turnMax);
       
-      if (speed > 0.1) {
-        angularVelocity += wheelAngle / (10 + angularDrag * 190);
+      if (this.body.speed > 0.1) {
+        angularVelocity += wheelAngle * WHEEL_COEFFICIENT * angularGrip;
       }
     } else if (wheelAngle > 0) {
       wheelAngle = Math.max(wheelAngle - turnRate, 0);
@@ -89,16 +99,9 @@ export class CarPlayer extends CarContainer {
       wheelAngle = Math.min(wheelAngle + turnRate, 0);
     }
 
-    if (this.inputs.up) {
-      throttle = power;
-    } else if (this.inputs.down) {
-      throttle = -powerReverse;
-      speed = -speed;
-    }
-
     const velocity = new Phaser.Math.Vector2(
-      velocityPrevX * drag + Math.sin(this.rotation) * (speed * grip + throttle),
-      velocityPrevY * drag - Math.cos(this.rotation) * (speed * grip + throttle)
+      velocityPrev.x * drag + Math.sin(this.rotation) * (speed * grip + power),
+      velocityPrev.y * drag - Math.cos(this.rotation) * (speed * grip + power)
     );
 
     this.setVelocity(velocity.x, velocity.y);
@@ -132,6 +135,6 @@ export class CarPlayer extends CarContainer {
 
 export class CarStatic extends CarContainer {
   constructor(scene, x, y) {
-    super(scene, x, y);
+    super(scene, x, y, 1);
   }
 }
