@@ -85,13 +85,13 @@ export class CarPlayer extends CarContainer {
       wheelAngle = Math.max(wheelAngle - turnRate, -turnMax);
       
       if (this.body.speed > 0.1) {
-        angularVelocity += wheelAngle * WHEEL_COEFFICIENT * angularGrip;
+        angularVelocity += (speed < 0 ? -1 : 1) * wheelAngle * WHEEL_COEFFICIENT * angularGrip;
       }
     } else if (this.inputs.right) {
       wheelAngle = Math.min(wheelAngle + turnRate, turnMax);
       
       if (this.body.speed > 0.1) {
-        angularVelocity += wheelAngle * WHEEL_COEFFICIENT * angularGrip;
+        angularVelocity += (speed < 0 ? -1 : 1) * wheelAngle * WHEEL_COEFFICIENT * angularGrip;
       }
     } else if (wheelAngle > 0) {
       wheelAngle = Math.max(wheelAngle - turnRate, 0);
