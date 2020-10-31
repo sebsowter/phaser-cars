@@ -55,7 +55,9 @@ export default class Inputs {
     return this.pad && this.pad.axes[0].getValue() === (isLeft ? -1 : 1);
   }
 
+  /*
   private getPadV(isUp: boolean): boolean {
     return this.pad && this.pad.axes[1].getValue() === (isUp ? -1 : 1);
   }
+  */
 }

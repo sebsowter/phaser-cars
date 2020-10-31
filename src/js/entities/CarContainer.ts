@@ -9,25 +9,26 @@ export default class CarContainer extends Phaser.GameObjects.Container {
 
     const CHASSIS_LENGTH = 16;
     const CHASSIS_WIDTH = 8;
+    const AXEL_WIDTH = CHASSIS_WIDTH + 2;
+    const AXEL_LENGTH = CHASSIS_LENGTH - 6;
 
     this.chassis = new Phaser.GameObjects.Sprite(scene, 0, 0, "cars", frame);
     this.wheels = [];
 
     for (let iy = 0; iy < 2; iy++) {
       for (let ix = 0; ix < 2; ix++) {
-        const wx = -CHASSIS_WIDTH / 2 + ix * CHASSIS_WIDTH;
-        const wy = -(CHASSIS_LENGTH / 2 - 2) + iy * (CHASSIS_LENGTH - 2 * 2);
+        const wx = AXEL_LENGTH / 2 - iy * AXEL_LENGTH;
+        const wy = -AXEL_WIDTH / 2 + ix * AXEL_WIDTH;
 
         this.wheels.push(
-          new Phaser.GameObjects.Rectangle(scene, wx, wy, 2, 4, 0x000000)
+          new Phaser.GameObjects.Rectangle(scene, wx, wy, 4, 2, 0x000000)
         );
       }
     }
 
     this.add(this.wheels);
     this.add(this.chassis);
-    this.setSize(CHASSIS_WIDTH, CHASSIS_LENGTH);
-    this.setDepth(2);
+    this.setSize(CHASSIS_LENGTH, CHASSIS_WIDTH);
 
     this.scene.add.existing(this);
     this.sprite = this.scene.matter.add.gameObject(
