@@ -6436,4 +6436,4 @@ t.exports={Utils:i(9),WebGLPipeline:i(147),WebGLRenderer:i(508),Pipelines:i(1435
  * @copyright    2020 Photon Storm Ltd.
  * @license      {@link https://opensource.org/licenses/MIT|MIT License}
  */
-t.exports={BitmapMaskPipeline:i(510),ForwardDiffuseLightPipeline:i(511),TextureTintPipeline:i(237),TextureTintStripPipeline:i(512),ModelViewProjection:i(238)}}])},t.exports=n()},10:function(t,e,i){t.exports=i(1)}}]);
+t.exports={BitmapMaskPipeline:i(510),ForwardDiffuseLightPipeline:i(511),TextureTintPipeline:i(237),TextureTintStripPipeline:i(512),ModelViewProjection:i(238)}}])},t.exports=n()},12:function(t,e,i){t.exports=i(1)}}]);
