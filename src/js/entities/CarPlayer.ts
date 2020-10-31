@@ -30,6 +30,7 @@ export default class CarPlayer extends CarContainer {
     const SPEED_MIN = 0.1;
     const { left, right, up, down } = this.scene.inputs;
     const [
+      wheelAngle,
       powerForward,
       powerReverse,
       turnMax,
@@ -39,6 +40,7 @@ export default class CarPlayer extends CarContainer {
       angularGrip,
       angularDrag,
     ] = this.getData([
+      "wheelAngle",
       "powerForward",
       "powerReverse",
       "turnMax",
@@ -49,6 +51,7 @@ export default class CarPlayer extends CarContainer {
       "angularDrag",
     ]);
 
+    let angle = wheelAngle;
     let angularVelocity = this.body.angularVelocity * angularDrag;
     let speed = this.body.speed;
     let power = 0;
@@ -62,19 +65,13 @@ export default class CarPlayer extends CarContainer {
 
     if (left || right) {
       const angularCoefficient = Math.sign(Math.floor(speed / SPEED_MIN));
+      const angularRate = (left ? -1 : 1) * turnRate;
 
-      this.wheelAngle = Math.min(
-        Math.max(this.wheelAngle + (left ? -turnRate : turnRate), -turnMax),
-        turnMax
-      );
-
+      angle = Math.min(Math.max(angle + angularRate, -turnMax), turnMax);
       angularVelocity +=
-        angularCoefficient * this.wheelAngle * WHEEL_COEFFICIENT * angularGrip;
-    } else if (this.wheelAngle !== 0) {
-      this.wheelAngle =
-        this.wheelAngle > 0
-          ? Math.max(this.wheelAngle - turnRate, 0)
-          : Math.min(this.wheelAngle + turnRate, 0);
+        angularCoefficient * angle * WHEEL_COEFFICIENT * angularGrip;
+    } else if (angle !== 0) {
+      angle = Math.sign(angle) * Math.min(Math.abs(angle) + turnRate, 0);
     }
 
     const velocityPrev = new Phaser.Math.Vector2(
@@ -90,22 +87,13 @@ export default class CarPlayer extends CarContainer {
     this.sprite.setAngularVelocity(angularVelocity);
 
     for (let i = 0; i < 2; i++) {
-      this.wheels[i].setRotation(this.wheelAngle);
+      this.wheels[i].setRotation(angle);
     }
+
+    this.setData("wheelAngle", angle);
 
     if (Math.abs(angularVelocity) > 0.025 && Math.abs(speed) > 1) {
-      this.scene.skidMarks.draw(
-        new Phaser.Math.Vector2(this.x, this.y),
-        this.rotation
-      );
+      this.scene.skidMarks.draw(this.x, this.y, this.rotation);
     }
-  }
-
-  public set wheelAngle(value: number) {
-    this.setData("wheelAngle", value);
-  }
-
-  public get wheelAngle(): number {
-    return this.getData("wheelAngle");
   }
 }

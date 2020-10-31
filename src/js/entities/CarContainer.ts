@@ -1,6 +1,6 @@
 export default class CarContainer extends Phaser.GameObjects.Container {
-  public wheels: Phaser.GameObjects.Rectangle[];
   public chassis: Phaser.GameObjects.Sprite;
+  public wheels: Phaser.GameObjects.Rectangle[];
   public sprite: Phaser.Physics.Matter.Sprite;
   public body: MatterJS.BodyType;
 
@@ -29,6 +29,7 @@ export default class CarContainer extends Phaser.GameObjects.Container {
     this.add(this.wheels);
     this.add(this.chassis);
     this.setSize(CHASSIS_LENGTH, CHASSIS_WIDTH);
+    this.setDepth(2);
 
     this.scene.add.existing(this);
     this.sprite = this.scene.matter.add.gameObject(

@@ -15,7 +15,7 @@ export default class GameScene extends Phaser.Scene {
 
   public init(): void {
     this.inputs = new Inputs(this);
-    this.skidMarks = new SkidMarkGroup(this);
+    this.skidMarks = new SkidMarkGroup(this).setDepth(1);
   }
 
   public create(): void {
@@ -23,12 +23,10 @@ export default class GameScene extends Phaser.Scene {
     const wallWidth = 32;
     const bg = this.add.image(0, 0, "bg").setOrigin(0, 0);
     const { width, height } = bg;
-    const player = new CarPlayer(this, width / 2, height / 2).setDepth(2);
-    const cars = this.add
-      .group({
-        classType: CarStatic,
-      })
-      .setDepth(1);
+    const player = new CarPlayer(this, width / 2, height / 2);
+    const cars = this.add.group({
+      classType: CarStatic,
+    });
 
     for (let i = 0; i < 15; i++) {
       if (Math.random() < 1 / random) {
