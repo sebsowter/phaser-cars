@@ -1,4 +1,4 @@
-import { CarPlayer, CarStatic } from "./Car";
+import { CarPlayer, CarStatic } from "../entities";
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -11,11 +11,10 @@ export default class GameScene extends Phaser.Scene {
 
   public create(): void {
     const random = 4;
-    const wallWidth = 16;
+    const wallWidth = 32;
     const bg = this.add.image(0, 0, "bg").setOrigin(0, 0);
-    const player = new CarPlayer(this, bg.width / 2, bg.height / 2).setAngle(
-      90
-    );
+    const { width, height } = bg;
+    const player = new CarPlayer(this, width / 2, height / 2).setAngle(90);
     const cars = this.add.group({
       classType: CarStatic,
     });
@@ -68,26 +67,13 @@ export default class GameScene extends Phaser.Scene {
       }
     }
 
-    console.log("player", player);
-
-    const camera = this.cameras.main;
-    camera.setBounds(0, 0, bg.width, bg.height);
-    camera.startFollow(player, true);
-
-    /*
-    const camera = this.cameras.main;
-    camera.setBounds(0, 0, bg.width, bg.height);
-    camera.startFollow(player);
-    console.log("bg", bg);
-    this.cameras.main.setBounds(0, 0, bg.width, bg.height);
-    this.cameras.main.startFollow(player);
-
+    this.cameras.main.setBounds(0, 0, width, height);
+    this.cameras.main.startFollow(player, true);
     this.matter.world.setBounds(
       wallWidth,
       wallWidth,
-      bg.width - wallWidth * 2,
-      bg.height - wallWidth * 2
+      width - wallWidth * 2,
+      height - wallWidth * 2
     );
-    */
   }
 }

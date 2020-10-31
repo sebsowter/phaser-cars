@@ -1,13 +1,21 @@
 import "phaser";
-import GameScene from "./GameScene";
-import LoaderScene from "./LoaderScene";
+import LoaderScene from "./scenes/LoaderScene";
+import GameScene from "./scenes/GameScene";
 
-const config = {
+const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   width: 256,
   height: 224,
   zoom: 3,
-  pixelArt: true,
+  input: {
+    keyboard: true,
+    gamepad: true,
+  },
+  render: {
+    pixelArt: true,
+    antialias: false,
+    antialiasGL: false,
+  },
   physics: {
     default: "matter",
     matter: {

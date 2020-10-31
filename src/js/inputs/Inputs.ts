@@ -4,16 +4,15 @@ export default class Inputs {
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
-
     this.keys = this.scene.input.keyboard.addKeys("W,A,S,D,up,left,down,right");
   }
 
   public get up(): boolean {
-    return this.keys.up.isDown || this.keys.W.isDown || this.padA || this.padB;
+    return this.keys.up.isDown || this.keys.W.isDown || this.padA;
   }
 
   public get down(): boolean {
-    return this.keys.down.isDown || this.keys.S.isDown;
+    return this.keys.down.isDown || this.keys.S.isDown || this.padB;
   }
 
   public get left(): boolean {
@@ -24,7 +23,7 @@ export default class Inputs {
     return this.keys.right.isDown || this.keys.D.isDown || this.getPadH(false);
   }
 
-  public get padA(): boolean {
+  private get padA(): boolean {
     return (
       this.pad &&
       this.pad.buttons.some(
@@ -33,7 +32,7 @@ export default class Inputs {
     );
   }
 
-  public get padB(): boolean {
+  private get padB(): boolean {
     return (
       this.pad &&
       this.pad.buttons.some(
@@ -42,15 +41,7 @@ export default class Inputs {
     );
   }
 
-  public getPadH(isLeft: boolean): boolean {
-    return this.pad && this.pad.axes[0].getValue() === (isLeft ? -1 : 1);
-  }
-
-  public getPadV(isUp: boolean): boolean {
-    return this.pad && this.pad.axes[1].getValue() === (isUp ? -1 : 1);
-  }
-
-  public get pad(): Phaser.Input.Gamepad.Gamepad {
+  private get pad(): Phaser.Input.Gamepad.Gamepad {
     const pad = this.scene.input.gamepad;
 
     if (pad && pad.gamepads && pad.gamepads.length) {
@@ -58,5 +49,13 @@ export default class Inputs {
     }
 
     return null;
+  }
+
+  private getPadH(isLeft: boolean): boolean {
+    return this.pad && this.pad.axes[0].getValue() === (isLeft ? -1 : 1);
+  }
+
+  private getPadV(isUp: boolean): boolean {
+    return this.pad && this.pad.axes[1].getValue() === (isUp ? -1 : 1);
   }
 }
