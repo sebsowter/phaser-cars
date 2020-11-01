@@ -7,38 +7,58 @@ export default class Inputs {
     this.keys = this.scene.input.keyboard.addKeys("W,A,S,D,up,left,down,right");
   }
 
-  public get up(): boolean {
+  public get accelerator(): boolean {
     return this.keys.up.isDown || this.keys.W.isDown || this.padA;
   }
 
-  public get down(): boolean {
+  public get breaks(): boolean {
     return this.keys.down.isDown || this.keys.S.isDown || this.padB;
   }
 
   public get left(): boolean {
-    return this.keys.left.isDown || this.keys.A.isDown || this.getPadH(true);
+    return this.keys.left.isDown || this.keys.A.isDown || this.padAxisH === -1;
   }
 
   public get right(): boolean {
-    return this.keys.right.isDown || this.keys.D.isDown || this.getPadH(false);
+    return this.keys.right.isDown || this.keys.D.isDown || this.padAxisH === 1;
   }
 
   private get padA(): boolean {
-    return (
-      this.pad &&
-      this.pad.buttons.some(
-        (button) => button.index % 2 === 0 && button.value === 1
-      )
+    return this.padButtons.some(
+      (button: Phaser.Input.Gamepad.Button) =>
+        button.index % 2 === 0 && button.value === 1
     );
   }
 
   private get padB(): boolean {
-    return (
-      this.pad &&
-      this.pad.buttons.some(
-        (button) => button.index % 2 === 1 && button.value === 1
-      )
+    return this.padButtons.some(
+      (button: Phaser.Input.Gamepad.Button) =>
+        button.index % 2 === 1 && button.value === 1
     );
+  }
+
+  private get padAxisH(): number {
+    if (this.pad) {
+      return this.pad.axes[0].getValue();
+    }
+
+    return 0;
+  }
+
+  private get padAxisV(): number {
+    if (this.pad) {
+      return this.pad.axes[1].getValue();
+    }
+
+    return 0;
+  }
+
+  private get padButtons(): Phaser.Input.Gamepad.Button[] {
+    if (this.pad) {
+      return this.pad.buttons;
+    }
+
+    return [];
   }
 
   private get pad(): Phaser.Input.Gamepad.Gamepad {
@@ -50,14 +70,4 @@ export default class Inputs {
 
     return null;
   }
-
-  private getPadH(isLeft: boolean): boolean {
-    return this.pad && this.pad.axes[0].getValue() === (isLeft ? -1 : 1);
-  }
-
-  /*
-  private getPadV(isUp: boolean): boolean {
-    return this.pad && this.pad.axes[1].getValue() === (isUp ? -1 : 1);
-  }
-  */
 }

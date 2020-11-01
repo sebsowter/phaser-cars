@@ -1,4 +1,4 @@
-import { CarContainer } from "./";
+import CarContainer from "./CarContainer";
 
 export default class CarStatic extends CarContainer {
   constructor(scene: Phaser.Scene, x: number, y: number) {
