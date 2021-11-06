@@ -101,29 +101,36 @@ export default class CarPlayer extends CarContainer {
 
     // Draw tyre marks.
     if (Math.abs(angularVelocity) > 0.03 && Math.abs(speedNew) > 0.5) {
-      const v1 = new Phaser.Math.Vector2(2, 0);
-      const v2 = new Phaser.Math.Vector2(5, 0);
-      const v3 = new Phaser.Math.Vector2(6, 0);
-
-      v1.setAngle(this.rotation);
-      v3.setAngle(this.rotation);
-      v2.setAngle(this.rotation + Math.PI / 2);
+      const markAngle = new Phaser.Math.Vector2(position)
+        .subtract(new Phaser.Math.Vector2(positionPrev))
+        .angle();
+      const markLength = new Phaser.Math.Vector2(2, 0).setAngle(markAngle);
+      const markY = new Phaser.Math.Vector2(6, 0).setAngle(this.rotation);
+      const markX = new Phaser.Math.Vector2(5, 0).setAngle(
+        this.rotation + Math.PI / 2
+      );
+      const markPosLeft = new Phaser.Math.Vector2(this)
+        .subtract(markX)
+        .subtract(markY);
+      const markPosRight = new Phaser.Math.Vector2(this)
+        .add(markX)
+        .subtract(markY);
 
       this.scene.road.strokeLineShape(
         new Phaser.Geom.Line(
-          this.x - v1.x - v2.x - v3.x,
-          this.y - v1.y - v2.y - v3.y,
-          this.x + v1.x - v2.x - v3.x,
-          this.y + v1.y - v2.y - v3.y
+          markPosLeft.x - markLength.x,
+          markPosLeft.y - markLength.y,
+          markPosLeft.x + markLength.x,
+          markPosLeft.y + markLength.y
         )
       );
 
       this.scene.road.strokeLineShape(
         new Phaser.Geom.Line(
-          this.x - v1.x + v2.x - v3.x,
-          this.y - v1.y + v2.y - v3.y,
-          this.x + v1.x + v2.x - v3.x,
-          this.y + v1.y + v2.y - v3.y
+          markPosRight.x - markLength.x,
+          markPosRight.y - markLength.y,
+          markPosRight.x + markLength.x,
+          markPosRight.y + markLength.y
         )
       );
     }
