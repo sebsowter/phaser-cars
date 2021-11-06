@@ -18,7 +18,7 @@ export default class CarPlayer extends CarContainer {
 
     const props: CarType = {
       angularGrip: 0.05,
-      grip: 0.02,
+      grip: 0.03,
       powerForward: 0.03,
       powerReverse: 0.015,
       turnMax: 40 * Phaser.Math.DEG_TO_RAD,
