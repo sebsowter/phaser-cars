@@ -1,10 +1,24 @@
+interface Keys {
+  up: Phaser.Input.Keyboard.Key;
+  down: Phaser.Input.Keyboard.Key;
+  left: Phaser.Input.Keyboard.Key;
+  right: Phaser.Input.Keyboard.Key;
+  W: Phaser.Input.Keyboard.Key;
+  A: Phaser.Input.Keyboard.Key;
+  S: Phaser.Input.Keyboard.Key;
+  D: Phaser.Input.Keyboard.Key;
+}
+
 export default class Inputs {
   private scene: Phaser.Scene;
-  private keys: any;
+  private keys: Keys;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
-    this.keys = this.scene.input.keyboard.addKeys("W,A,S,D,up,left,down,right");
+
+    this.keys = this.scene.input.keyboard.addKeys(
+      "W,A,S,D,up,left,down,right"
+    ) as Keys;
   }
 
   public get accelerator(): boolean {
@@ -25,21 +39,21 @@ export default class Inputs {
 
   private get padA(): boolean {
     return this.padButtons.some(
-      (button: Phaser.Input.Gamepad.Button) =>
-        button.index % 2 === 0 && button.value === 1
+      (button) => button.index % 2 === 0 && button.value === 1
     );
   }
 
   private get padB(): boolean {
     return this.padButtons.some(
-      (button: Phaser.Input.Gamepad.Button) =>
-        button.index % 2 === 1 && button.value === 1
+      (button) => button.index % 2 === 1 && button.value === 1
     );
   }
 
   private get padAxisH(): number {
     if (this.pad) {
-      return this.pad.axes[0].getValue();
+      const [x] = this.pad.axes;
+
+      return x.getValue();
     }
 
     return 0;
@@ -47,27 +61,27 @@ export default class Inputs {
 
   private get padAxisV(): number {
     if (this.pad) {
-      return this.pad.axes[1].getValue();
+      const [_, y] = this.pad.axes;
+
+      return y.getValue();
     }
 
     return 0;
   }
 
   private get padButtons(): Phaser.Input.Gamepad.Button[] {
-    if (this.pad) {
-      return this.pad.buttons;
-    }
-
-    return [];
+    return this.pad?.buttons || [];
   }
 
   private get pad(): Phaser.Input.Gamepad.Gamepad {
     const pad = this.scene.input.gamepad;
 
-    if (pad && pad.gamepads && pad.gamepads.length) {
-      return pad.gamepads[0];
+    if (pad.gamepads.length) {
+      const [pad1] = pad.gamepads;
+
+      return pad1;
     }
 
-    return null;
+    return;
   }
 }

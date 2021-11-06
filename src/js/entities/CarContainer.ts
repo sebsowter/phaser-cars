@@ -4,7 +4,7 @@ export default class CarContainer extends Phaser.GameObjects.Container {
   public sprite: Phaser.Physics.Matter.Sprite;
   public body: MatterJS.BodyType;
 
-  constructor(scene: Phaser.Scene, x: number, y: number, frame: number) {
+  constructor(scene: Phaser.Scene, x: number, y: number, frame: number = 0) {
     super(scene, x, y);
 
     const CHASSIS_LENGTH = 16;
@@ -17,12 +17,16 @@ export default class CarContainer extends Phaser.GameObjects.Container {
 
     for (let iy = 0; iy < 2; iy++) {
       for (let ix = 0; ix < 2; ix++) {
-        const wx = AXEL_LENGTH / 2 - iy * AXEL_LENGTH;
-        const wy = -AXEL_WIDTH / 2 + ix * AXEL_WIDTH;
-
-        this.wheels.push(
-          new Phaser.GameObjects.Rectangle(scene, wx, wy, 4, 2, 0x000000)
+        const wheel = new Phaser.GameObjects.Rectangle(
+          scene,
+          AXEL_LENGTH / 2 - iy * AXEL_LENGTH,
+          -AXEL_WIDTH / 2 + ix * AXEL_WIDTH,
+          4,
+          2,
+          0x000000
         );
+
+        this.wheels.push(wheel);
       }
     }
 
@@ -32,6 +36,7 @@ export default class CarContainer extends Phaser.GameObjects.Container {
     this.setDepth(2);
 
     this.scene.add.existing(this);
+
     this.sprite = this.scene.matter.add.gameObject(
       this
     ) as Phaser.Physics.Matter.Sprite;

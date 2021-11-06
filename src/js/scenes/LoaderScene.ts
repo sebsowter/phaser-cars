@@ -1,5 +1,5 @@
 export default class LoaderScene extends Phaser.Scene {
-  public preload(): void {
+  public preload() {
     this.load.image("bg", "./assets/bg.png");
     this.load.spritesheet("cars", "./assets/cars.png", {
       frameWidth: 16,
@@ -7,7 +7,7 @@ export default class LoaderScene extends Phaser.Scene {
     });
   }
 
-  public create(): void {
+  public create() {
     this.scene.start("game");
   }
 }
