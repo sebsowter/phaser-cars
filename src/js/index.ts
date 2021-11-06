@@ -12,8 +12,6 @@ const config: Phaser.Types.Core.GameConfig = {
   },
   render: {
     pixelArt: true,
-    antialias: false,
-    antialiasGL: false,
   },
   physics: {
     default: "matter",
@@ -27,6 +25,4 @@ const config: Phaser.Types.Core.GameConfig = {
   scene: [LoaderScene, GameScene],
 };
 
-window.addEventListener("load", function () {
-  const game = new Phaser.Game(config);
-});
+export const game = new Phaser.Game(config);
